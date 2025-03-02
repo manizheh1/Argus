@@ -29,6 +29,8 @@ pyqt6 = "^6.8.1"
 torchmetrics = "^1.6.1"
 torchsampler = "^0.1.2"
 transformers = {extras = ["torch"], version = "^4.49.0"}
+opencv-python = "^4.11.0.86"
+timm = "0.9.16"
 
 [build-system]
 requires = ["poetry-core"]
