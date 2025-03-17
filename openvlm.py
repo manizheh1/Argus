@@ -7,6 +7,7 @@ import torch
 from PIL import Image
 from transformers import AutoProcessor
 from transformers import AutoModelForVision2Seq
+import pyzed.sl as sl
 
 # Server Configuration
 HOST = "127.0.0.1"  # Change this to the server's IP address if needed
@@ -26,7 +27,7 @@ def receive_image(client_socket):
         # Receive the image bytes
         image_data = b""
         while len(image_data) < image_size:
-            packet = client_socket.recv(4096)  # Receive in chunks
+            packet = client_socket.recv(314095483)  # Receive in chunks
             if not packet:
                 return None
             image_data += packet
@@ -52,7 +53,7 @@ def main():
         trust_remote_code=True,
     ).to("cuda:0")
 
-    prompt = "In: What action should the robot take to pick up the cardboard box?\nOut:"
+    prompt = "In: What action should the robot take to pick up the chilli?\nOut:"
 
     while True:
         try:
@@ -64,7 +65,10 @@ def main():
             while True:
                 pil_image = receive_image(client_socket)
                 if pil_image is None:
-                    break  # Reconnect if no image received
+                    print("No image received. Reconnecting...")
+                    continue  # Reconnect if no image received
+                # show image
+                # pil_image.show()
 
                 # Process the image
                 inputs = processor(prompt, pil_image).to("cuda:0", dtype=torch.bfloat16)

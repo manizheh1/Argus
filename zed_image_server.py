@@ -62,8 +62,8 @@ def accept_clients(server_socket):
 # Initialize ZED Camera
 zed = sl.Camera()
 init_params = sl.InitParameters()
-init_params.camera_resolution = sl.RESOLUTION.HD720
-init_params.camera_fps = 30
+init_params.camera_resolution = sl.RESOLUTION.VGA
+init_params.camera_fps = 1
 init_params.depth_mode = sl.DEPTH_MODE.PERFORMANCE
 init_params.coordinate_units = sl.UNIT.MILLIMETER
 

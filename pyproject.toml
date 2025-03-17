@@ -31,6 +31,7 @@ torchsampler = "^0.1.2"
 transformers = {extras = ["torch"], version = "^4.49.0"}
 opencv-python = "^4.11.0.86"
 timm = "0.9.16"
+cython = "^3.0.12"
 
 [build-system]
 requires = ["poetry-core"]
