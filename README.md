@@ -117,4 +117,4 @@ where:
 
 ## File structure
 
-The Franka Emike is controlled using the `alexandros_panda_moveit_library.py` file. The data is collected using the `rdls_saver.py` which manually controlling the robot to perform the task. The base OpenVLA model is then finetuned and run using the `openvllm_latest.py` file.
+The Franka Emika is controlled using the `alexandros_panda_moveit_library.py` file. The data is collected using the `rdls_saver.py` which manually controlling the robot to perform the task. The base OpenVLA model is then finetuned and run using the `openvllm_latest.py` file.
