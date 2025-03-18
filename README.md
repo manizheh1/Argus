@@ -1,4 +1,8 @@
-# RLDS Dataset Structure for Franka Panda
+# Project Argus
+
+The aim of this project is to develop a vision-language-action based OpenVLA agent for the Franka Panda robot to perform the mug pick-and-place task. The agent is fune-tuned using LoRA finetuning technique on the RLDS dataset collected. The images were captured using the ZED 2i camera and the dataset is stored in the RLDS format.
+
+## RLDS Dataset Structure for Franka Panda
 
 Below are the details of the RLDS (Reinforcement Learning Datasets) file structure used to store episode data for the **Franka Panda** robot performing the **mug pick-and-place** task. The environment consists of clutter and varying positions of Tomato sauce the object the we are interesrted to pickup. The dataset adheres to the [RLDS standard](https://github.com/google-research/rlds), ensuring compatibility with OpenVLA.
 
@@ -110,3 +114,7 @@ where:
 ![Pic 2](images/IMG_0205.jpg)
 ![Pic 3](images/IMG_0206.jpg)
 ![Pic 4](images/IMG_0207.jpg)
+
+## File structure
+
+The Franka Emike is controlled using the `alexandros_panda_moveit_library.py` file. The data is collected using the `rdls_saver.py` which manually controlling the robot to perform the task. The base OpenVLA model is then finetuned and run using the `openvllm_latest.py` file.
