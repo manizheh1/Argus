@@ -63,9 +63,10 @@ class RDLS_Saver:
                 euler = euler_from_quaternion(quaternion)
                 position.extend(euler)
                 if time.time() - start_time > 10.0:
-                    position.extend([0.0])
-                else:
+                    # Gripper Is closed because the object is grabbed
                     position.extend([1.0])
+                else:
+                    position.extend([0.0])
                 episode["actions"] = position
                 episode["rewards"] = 0
                 episode["success"] = False
