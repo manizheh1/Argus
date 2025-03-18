@@ -1,6 +1,6 @@
 # RLDS Dataset Structure for Franka Panda
 
-Below are the details of the RLDS (Reinforcement Learning Datasets) file structure used to store episode data for the **Franka Panda** robot performing the **mug pick-and-place** task. The environment consists of clutter and varying positions of Toamto sauce the object the we are interesrted to pickup. The dataset adheres to the [RLDS standard](https://github.com/google-research/rlds), ensuring compatibility with OpenVLA.
+Below are the details of the RLDS (Reinforcement Learning Datasets) file structure used to store episode data for the **Franka Panda** robot performing the **mug pick-and-place** task. The environment consists of clutter and varying positions of Tomato sauce the object the we are interesrted to pickup. The dataset adheres to the [RLDS standard](https://github.com/google-research/rlds), ensuring compatibility with OpenVLA.
 
 ## **Episode Structure**
 
