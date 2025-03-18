@@ -38,7 +38,7 @@ def main():
     print("[+] Connected to the server.")
     zed = sl.Camera()
     init_params = sl.InitParameters()
-    init_params.camera_resolution = sl.RESOLUTION.VGA
+    init_params.camera_resolution = sl.RESOLUTION.HD720
     init_params.camera_fps = 20
     init_params.depth_mode = sl.DEPTH_MODE.PERFORMANCE
     init_params.coordinate_units = sl.UNIT.MILLIMETER
@@ -60,8 +60,8 @@ def main():
         low_cpu_mem_usage=True,
         trust_remote_code=True,
     ).to("cuda:0")
-    prompt = "In: Pick up the mug and place it in black bin\nOut:"
-    prompt = "In: Pick up tomato sauce container\nOut:"
+    # prompt = "In: Pick up the mug and place it in black bin\nOut:"
+    prompt = "In: Pickup mug\nOut:"
     while 1:
         if zed.grab(runtime_parameters) == sl.ERROR_CODE.SUCCESS:
             zed.retrieve_image(bgra_image, sl.VIEW.LEFT)
@@ -75,7 +75,7 @@ def main():
             cv2_image = cv2.cvtColor(numpy_image, cv2.COLOR_RGB2BGR)
             cv2.imshow("ZED", cv2_image)
             cv2.waitKey(1)
-            sleep(3)
+            sleep(0.5)
 
 
 if __name__ == "__main__":
