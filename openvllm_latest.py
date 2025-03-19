@@ -25,6 +25,11 @@ def send_franka_eef_pose(client_socket, pose):
         # Send the actual JSON data
         client_socket.sendall(pose_data.encode("utf-8"))
 
+        # Wait for the server to acknowledge the message
+        ack = client_socket.recv(4)
+        if ack != b"ACK":
+            print("Server did not acknowledge the message.")
+
     except Exception as e:
         print(f"Error sending data: {e}")
 
@@ -39,7 +44,7 @@ def main():
     zed = sl.Camera()
     init_params = sl.InitParameters()
     init_params.camera_resolution = sl.RESOLUTION.HD720
-    init_params.camera_fps = 20
+    init_params.camera_fps = 1
     init_params.depth_mode = sl.DEPTH_MODE.PERFORMANCE
     init_params.coordinate_units = sl.UNIT.MILLIMETER
 
@@ -61,12 +66,13 @@ def main():
         trust_remote_code=True,
     ).to("cuda:0")
     # prompt = "In: Pick up the mug and place it in black bin\nOut:"
-    prompt = "In: Pickup mug\nOut:"
+    prompt = "Pickup corn"
     while 1:
         if zed.grab(runtime_parameters) == sl.ERROR_CODE.SUCCESS:
             zed.retrieve_image(bgra_image, sl.VIEW.LEFT)
-            converted_rgb_image = bgra_image.get_data()[:, :, :3][:, :, ::-1]
-            pil_image = Image.fromarray(converted_rgb_image)
+            # converted_rgb_image = bgra_image.get_data()[:, :, :3][:, :, ::-1]
+            converted_rgb_image = bgra_image.get_data()[:, :, [2, 1, 0, 3]]
+            pil_image = Image.fromarray(converted_rgb_image, mode="RGBA")
             inputs = processor(prompt, pil_image).to("cuda:0", dtype=torch.bfloat16)
             action = vla.predict_action(**inputs, unnorm_key="viola", do_sample=False)
             print(action)  # Print or log the predicted action
@@ -75,7 +81,7 @@ def main():
             cv2_image = cv2.cvtColor(numpy_image, cv2.COLOR_RGB2BGR)
             cv2.imshow("ZED", cv2_image)
             cv2.waitKey(1)
-            sleep(0.5)
+            # sleep(0.5)
 
 
 if __name__ == "__main__":

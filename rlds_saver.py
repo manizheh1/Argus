@@ -22,8 +22,6 @@ class RDLS_Saver:
         self.joint_states = None
         self.tf = TransformListener()
         self.loop()
-        
-
 
     def joint_states_callback(self, data):
         # print("sup")
@@ -32,10 +30,10 @@ class RDLS_Saver:
     def zed_rgb_image_callback(self, data):
         self.rgb_data = np.frombuffer(data.data, dtype=np.uint8).reshape(data.height, data.width, -1).tolist()
         # convert to numpy array
-    
+
     def zed_depth_image_callback(self, data):
         self.depth_data = np.frombuffer(data.data, dtype=np.uint8).reshape(data.height, data.width, -1).tolist()
-    
+
     def loop(self):
         start_time = time.time()
         while time.time() - start_time < 50.0:
@@ -58,7 +56,7 @@ class RDLS_Saver:
                     "joint_states": self.joint_states,
                 }
                 # t = self.tf.getLatestCommonTime("/panda_link0", "/panda_hand")
-                position, quaternion = self.tf.lookupTransform("panda_link8", "panda_link0",  rospy.Time(0))
+                position, quaternion = self.tf.lookupTransform("panda_link8", "panda_link0", rospy.Time(0))
                 # Change this quaternion to euler angles
                 euler = euler_from_quaternion(quaternion)
                 position.extend(euler)
@@ -85,5 +83,6 @@ def main():
     #     json.dump({"episodes": all_episodes}, f)
     rospy.loginfo("Cleanup complete.")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
