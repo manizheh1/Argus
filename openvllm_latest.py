@@ -66,15 +66,15 @@ def main():
         trust_remote_code=True,
     ).to("cuda:0")
     # prompt = "In: Pick up the mug and place it in black bin\nOut:"
-    prompt = "Pickup corn"
+    prompt = "In: Pick up the red can\nOut:"
     while 1:
         if zed.grab(runtime_parameters) == sl.ERROR_CODE.SUCCESS:
             zed.retrieve_image(bgra_image, sl.VIEW.LEFT)
             # converted_rgb_image = bgra_image.get_data()[:, :, :3][:, :, ::-1]
-            converted_rgb_image = bgra_image.get_data()[:, :, [2, 1, 0, 3]]
-            pil_image = Image.fromarray(converted_rgb_image, mode="RGBA")
+            converted_rgb_image = bgra_image.get_data()[:, :, [2, 1, 0]]
+            pil_image = Image.fromarray(converted_rgb_image)
             inputs = processor(prompt, pil_image).to("cuda:0", dtype=torch.bfloat16)
-            action = vla.predict_action(**inputs, unnorm_key="viola", do_sample=False)
+            action = vla.predict_action(**inputs, unnorm_key="bridge_orig", do_sample=False)
             print(action)  # Print or log the predicted action
             send_franka_eef_pose(client_socket, action)
             numpy_image = np.array(pil_image)
