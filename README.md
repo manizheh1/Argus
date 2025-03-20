@@ -4,11 +4,15 @@ Name: Manizheh Zand, Xinqi Zhang
 
 The aim of this project is to develop a vision-language-action based OpenVLA agent for the Franka Panda robot to perform the mug pick-and-place task. The agent is fune-tuned using LoRA finetuning technique on the RLDS dataset collected. The images were captured using the ZED 2i camera and the dataset is stored in the RLDS format.
 
-## RLDS Dataset Structure for Franka Panda
+## Installation Instructions
+Krishna Can you help with this part
+
+## Usage Guide
+### RLDS Dataset Structure for Franka Panda
 
 Below are the details of the RLDS (Reinforcement Learning Datasets) file structure used to store episode data for the **Franka Panda** robot performing the **mug pick-and-place** task. The environment consists of clutter and varying positions of Tomato sauce the object the we are interesrted to pickup. The dataset adheres to the [RLDS standard](https://github.com/google-research/rlds), ensuring compatibility with OpenVLA.
 
-## **Episode Structure**
+### **Episode Structure**
 
 Each episode is stored as a dictionary with the following keys:
 
@@ -22,7 +26,7 @@ Each episode is stored as a dictionary with the following keys:
 - **`input`**: The initial natural language instruction.
 - **`openVLA_compatible`**: Boolean indicating OpenVLA compatibility.
 
-### **Observations**
+#### **Observations**
 
 Each observation consists of:
 
@@ -38,7 +42,7 @@ episode["observations"] = {
 }
 ```
 
-### **Actions**
+#### **Actions**
 
 Each action consists of:
 
@@ -56,7 +60,7 @@ episode["actions"] = [
 ]
 ```
 
-### **Rewards and Success**
+#### **Rewards and Success**
 
 - **Initial reward**: `0`
 - **Final reward**: `1` if successful, else remains `0`
@@ -71,7 +75,7 @@ episode["rewards"] = 1  # Task completed
 episode["success"] = True
 ```
 
-## **RLDS File Format**
+### **RLDS File Format**
 
 The dataset is stored as a sequence of episodes in a structured RLDS format. Each episode follows:
 
@@ -90,7 +94,7 @@ where:
 -$ C $ = Camera
 -$ I $ = Input instruction
 
-### **Example JSON Entry**
+#### **Example JSON Entry**
 
 ```json
 {
@@ -110,13 +114,16 @@ where:
 }
 ```
 
-## Dataset Collection Environment Setup
+### Dataset Collection Environment Setup
 
 ![Pic 1](images/IMG_0204.jpg)
 ![Pic 2](images/IMG_0205.jpg)
 ![Pic 3](images/IMG_0206.jpg)
 ![Pic 4](images/IMG_0207.jpg)
 
-## File structure
+### File structure
 
 The Franka Emika is controlled using the `alexandros_panda_moveit_library.py` file. The data is collected using the `rdls_saver.py` which manually controlling the robot to perform the task. The base OpenVLA model is then finetuned and run using the `openvllm_latest.py` file.
+
+## Expected Output
+Krishna Can you help with this part
