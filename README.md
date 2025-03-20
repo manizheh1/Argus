@@ -1,5 +1,7 @@
 # Project Argus
 
+Name: Manizheh Zand, Xinqi Zhang
+
 The aim of this project is to develop a vision-language-action based OpenVLA agent for the Franka Panda robot to perform the mug pick-and-place task. The agent is fune-tuned using LoRA finetuning technique on the RLDS dataset collected. The images were captured using the ZED 2i camera and the dataset is stored in the RLDS format.
 
 ## RLDS Dataset Structure for Franka Panda
