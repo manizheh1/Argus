@@ -28,7 +28,7 @@ class FrankaOperator:
         self.robot = moveit_commander.RobotCommander()
         group_name = "panda_manipulator"
         self.move_group = moveit_commander.MoveGroupCommander(group_name)
-        self.move_group.set_planning_time(10.0)
+        self.move_group.set_planning_time(5.0)
         print(f"============ End effector link: {self.move_group.get_end_effector_link()}")
         self.display_trajectory_publisher = rospy.Publisher(
             "/move_group/display_planned_path", moveit_msgs.msg.DisplayTrajectory, queue_size=20
@@ -58,6 +58,25 @@ class FrankaOperator:
         # goal.force = 50.0
         client.send_goal(goal)
         client.wait_for_result()
+        # Wait for message
+        # left_finger_width = rospy.wait_for_message("/franka_gripper/joint_states", JointState).position[0]
+        # if left_finger_width < 0.0004:
+        #     rospy.loginfo("Gripper Failed to close, pausing further execution")
+        #     self.event_publisher.publish(
+        #         Header(stamp=rospy.Time.now(), frame_id="Panda Error: Panda Failed To Close Gripper Error")
+        #     )
+        #     self.open_gripper()
+        #     input("Fix franka errors and press Enter to continue...")
+        #     self.close_gripper()
+
+    def partiall_open_gripper(self) -> None:
+        client = actionlib.SimpleActionClient("/franka_gripper/move", franka_gripper.msg.MoveAction)
+        client.wait_for_server()
+        goal = franka_gripper.msg.MoveGoal()
+        goal.width = 0.06  # TODO: Find the best possible value for this
+        goal.speed = 0.08
+        client.send_goal(goal)
+        client.wait_for_result()
 
     def open_gripper(self) -> None:
         client = actionlib.SimpleActionClient("/franka_gripper/move", franka_gripper.msg.MoveAction)
@@ -67,6 +86,12 @@ class FrankaOperator:
         goal.speed = 0.08
         client.send_goal(goal)
         client.wait_for_result()
+
+    def panda_recover(self) -> None:
+        for _ in range(3):
+            # Write the text in red
+            print("\033[91m" + "Sending Recovery Message" + "\033[0m")
+            self.panda_recovery.publish(franka_msgs.msg.ErrorRecoveryActionGoal())
 
     def _post_execution_status(self, execution_status) -> None:
         self.execution_status = execution_status.status.text
@@ -113,15 +138,46 @@ class FrankaOperator:
             self.move_to_pose(target_pose, recursive_i + 1)
         return execution_status
 
+    def lift_object(self, height: float) -> bool:
+        """
+        Lift the object by the given height.
+        """
+        current_pose = self.move_group.get_current_pose()
+        # current_pose = transform_pose_stamped("panda_EE", current_pose)
+        current_pose.pose.position.z += height
+        return self.move_to_pose(current_pose)
+    
+    def move_object_left(self, left_length: float) -> bool:
+        """
+        Lift the object by the given height.
+        """
+        current_pose = self.move_group.get_current_pose()
+        # current_pose = transform_pose_stamped("panda_EE", current_pose)
+        current_pose.pose.position.y += left_length
+        return self.move_to_pose(current_pose)
+
     def move_object_delta_eef(self, eef_list) -> bool:
         """
         Move the object left by the given length.
         """
         dx, dy, dz, droll, dpitch, dyaw, gripper_open_close = eef_list
         current_pose = self.move_group.get_current_pose()
-        current_pose.pose.position.x += dx
-        current_pose.pose.position.y += dy
-        current_pose.pose.position.z += dz
+        delta = 1.0
+        def clamp(x, lower, upper):
+            return max(lower, min(x, upper))
+        clamp_val = 0.05
+        print(f"Current pose: X: {current_pose.pose.position.x}, Y: {current_pose.pose.position.y}, Z: {current_pose.pose.position.z}")
+        current_pose.pose.position.x += clamp(delta * dx, -clamp_val, clamp_val)
+        current_pose.pose.position.y += clamp(delta * -dy, -clamp_val, clamp_val)
+        current_pose.pose.position.z += clamp(delta * -dz, -clamp_val, clamp_val)
+        if current_pose.pose.position.z < 0.1:
+            current_pose.pose.position.z -= clamp(delta * dz, -clamp_val, clamp_val)
+        
+        
+        print(f"Adjusted Pose: X: {current_pose.pose.position.x}, Y: {current_pose.pose.position.y}, Z: {current_pose.pose.position.z}")
+        # current_pose.pose.position.x = dx
+        # current_pose.pose.position.y = dy
+        # current_pose.pose.position.z = dz
         # current_pose.pose.orientation = tf.transformations.quaternion_from_euler(droll, dpitch, dyaw, axes="sxyz")
         current_quat = [
             current_pose.pose.orientation.x,
@@ -129,7 +185,7 @@ class FrankaOperator:
             current_pose.pose.orientation.z,
             current_pose.pose.orientation.w,
         ]
-        delta_quat = tf.transformations.quaternion_from_euler(droll, dpitch, dyaw)
+        delta_quat = tf.transformations.quaternion_from_euler(delta*droll, delta*dpitch, delta*dyaw)
         new_quat = tf.transformations.quaternion_multiply(current_quat, delta_quat)
         current_pose.pose.orientation.x = new_quat[0]
         current_pose.pose.orientation.y = new_quat[1]
@@ -137,7 +193,16 @@ class FrankaOperator:
         current_pose.pose.orientation.w = new_quat[3]
         # if gripper_open_close > 0.7:
         #     self.close_gripper()
+        # if gripper_open_close < 0.2:
+        #     print(f"Gripper should be closed: {gripper_open_close}")
         return self.move_to_pose(current_pose)
+        
+
+    # Rotate the eef by 90 degrees
+    def rotate_eef_90(self):
+        joint_goal = self.move_group.get_current_joint_values()
+        joint_goal[6] = -1.02
+        self.move_group.go(joint_goal, wait=True)
     
     def start_socket_server(self):
         """
@@ -164,25 +229,25 @@ class FrankaOperator:
 
                     # Convert JSON string back to a list
                     eef_positions = json.loads(pose_data)
-                    print(f"Received data: {eef_positions}")
                     if isinstance(eef_positions, list) and len(eef_positions) == 7:
-                        print(f"Received joint positions: {eef_positions}")
+                        print(f"Received EEF from Model: {eef_positions}")                        
                         self.move_object_delta_eef(eef_positions)
+                        # Send ACK
+                        conn.sendall("ACK".encode("utf-8"))
                     else:
                         print("Invalid data received. Expected a list of 7 joint values.")
 
                 except Exception as e:
                     print(f"Error receiving data: {e}")
 
-                finally:
-                    conn.close()
-                    print("Connection closed.")
+                # finally:
+                #     conn.close()
+                #     print("Connection closed.")
 
 
 if __name__ == "__main__":
     rospy.init_node("franka_operator", anonymous=True)
     operator = FrankaOperator()
     operator.move_to_pose(PANDA_HOME_JOINTS)
-    operator.open_gripper()
     operator.start_socket_server()
     
