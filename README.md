@@ -5,9 +5,20 @@ Name: Manizheh Zand, Xinqi Zhang
 The aim of this project is to develop a vision-language-action based OpenVLA agent for the Franka Panda robot to perform the mug pick-and-place task. The agent is fune-tuned using LoRA finetuning technique on the RLDS dataset collected. The images were captured using the ZED 2i camera and the dataset is stored in the RLDS format.
 
 ## Installation Instructions
-Krishna Can you help with this part
+
+The project can be installed by using the following command:
+
+```bash
+poetry install
+source .venv/bin/activate
+pip install tensorflow-graphics
+pip install flash-attn --no-build-isolation
+export PYTHONPATH=`pwd`
+pip install --no-deps git+https://github.com/moojink/dlimp_openvla
+```
 
 ## Usage Guide
+
 ### RLDS Dataset Structure for Franka Panda
 
 Below are the details of the RLDS (Reinforcement Learning Datasets) file structure used to store episode data for the **Franka Panda** robot performing the **mug pick-and-place** task. The environment consists of clutter and varying positions of Tomato sauce the object the we are interesrted to pickup. The dataset adheres to the [RLDS standard](https://github.com/google-research/rlds), ensuring compatibility with OpenVLA.
@@ -126,4 +137,5 @@ where:
 The Franka Emika is controlled using the `alexandros_panda_moveit_library.py` file. The data is collected using the `rdls_saver.py` which manually controlling the robot to perform the task. The base OpenVLA model is then finetuned and run using the `openvllm_latest.py` file.
 
 ## Expected Output
+
 Krishna Can you help with this part
