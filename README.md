@@ -138,9 +138,9 @@ The Franka Emika is controlled using the `alexandros_panda_moveit_library.py` fi
 
 ## Expected Output
 
-There are two scripts that need to be run. First `alexandros_panda_moveit_library.py` which runs a ROS node as well as socket at port 9999. This socket will be receiving the the commands that are sent to the robot. The socket will receive the 8 joint commands required for the robot to execute the action.
+There are two scripts that need to be run. First `alexandros_panda_moveit_library.py` which runs a ROS node as well as socket at port 9999. This socket will be receiving the the commands that are sent to the robot. The socket will receive the 8 joint commands ($a_t = (\Delta x, \Delta y, \Delta z, \Delta \phi, \Delta \theta, \Delta \psi, g)$) required for the robot to execute the action.
 
-Secondly the trained model is run using the `openvllm_latest.py` file. This file will load the trained model and run the inference on the images that are captured by the camera live. The model will output the actions that need to be taken by the robot to perform the task. The actions being the 8 joint commands that are sent to the robot.
+Secondly the trained model is run using the `openvllm_latest.py` file. This file will load the trained model and run the inference on the images that are captured by the camera live. The model will output the actions that need to be taken by the robot to perform the task. The actions being the 8 joint commands that are sent to the robot via socket 9999.
 
 ## LoRA Training
 
