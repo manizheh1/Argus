@@ -127,10 +127,10 @@ where:
 
 ### Dataset Collection Environment Setup
 
-![Pic 1](images/IMG_0204.jpg)
-![Pic 2](images/IMG_0205.jpg)
-![Pic 3](images/IMG_0206.jpg)
-![Pic 4](images/IMG_0207.jpg)
+![Pic 1](images/Task-Flow-1.jpg)
+![Pic 2](images/Task-Flow-2.jpg)
+![Pic 3](images/Task-Flow-3.jpg)
+![Pic 4](images/Task-Flow-4.jpg)
 
 ### File structure
 
